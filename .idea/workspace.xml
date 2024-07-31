@@ -7,8 +7,6 @@
     <list default="true" id="46c48427-02e6-4061-9ad5-19819e424448" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/License.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/License.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Vehicle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Vehicle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -41,7 +39,7 @@
   "keyToString": {
     "Application.Main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "feat/rto__registrations",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/applications/mysql-connector-j-8.0.31/mysql-connector-j-8.0.31/mysql-connector-j-8.0.31.jar",
     "node.js.detected.package.eslint": "true",
@@ -72,7 +70,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1722409836116</updated>
-      <workItem from="1722409837237" duration="17638000" />
+      <workItem from="1722409837237" duration="20329000" />
     </task>
     <servers />
   </component>
@@ -84,7 +82,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
-          <line>148</line>
+          <line>142</line>
           <properties class="controller.UserController" method="getPendingVehicleRegistrations">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -93,7 +91,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
-          <line>176</line>
+          <line>170</line>
           <properties class="controller.UserController" method="approveVehicleRegistration">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -111,7 +109,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
-          <line>287</line>
+          <line>299</line>
           <properties class="controller.UserController" method="getAllLicenses">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -120,7 +118,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
-          <line>256</line>
+          <line>268</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>

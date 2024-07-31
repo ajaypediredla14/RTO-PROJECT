@@ -115,94 +115,108 @@ public class Main {
     }
 
     private static void viewVehicleRegistrations(Scanner scanner) {
-        List<Vehicle> vehicles = userController.getPendingVehicleRegistrations();
+        while (true) {
+            List<Vehicle> vehicles = userController.getPendingVehicleRegistrations();
 
-        // Check if there are any vehicles to display
-        if (vehicles.isEmpty()) {
-            System.out.println("No pending vehicle registrations.");
-        } else {
-            // Print the table header
-            System.out.printf("%-10s %-20s %-20s %-20s %-10s %-10s %-10s%n", "ID", "Model", "License Number", "Owner Name", "Type", "Status","vehicle_number");
-            System.out.println("----------------------------------------------------------------------------------------------------");
-
-            // Print each vehicle in a row
-            for (Vehicle vehicle : vehicles) {
-                System.out.printf("%-10d %-20s %-20s %-20s %-10s %-10s %-10s%n",
-                        vehicle.getId(), vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType(), vehicle.getStatus(),vehicle.getVehicle_number());
-            }
-
-            // Prompt user to approve or deny
-            System.out.print("\nEnter vehicle ID to approve/deny: ");
-            int vehicleId = scanner.nextInt();
-            System.out.print("Enter 1 to approve, 2 to deny: ");
-            int action = scanner.nextInt();
-
-            boolean success;
-            if (action == 1) {
-                success = userController.approveVehicleRegistration(vehicleId);
-                if (success) {
-                    System.out.println("Vehicle registration approved.");
-                } else {
-                    System.out.println("Failed to approve vehicle registration.");
-                }
-            } else if (action == 2) {
-                success = userController.denyVehicleRegistration(vehicleId);
-                if (success) {
-                    System.out.println("Vehicle registration denied.");
-                } else {
-                    System.out.println("Failed to deny vehicle registration.");
-                }
+            // Check if there are any vehicles to display
+            if (vehicles.isEmpty()) {
+                System.out.println("No pending vehicle registrations.");
+                return;
             } else {
-                System.out.println("Invalid action. Please enter 1 to approve or 2 to deny.");
+                // Print the table header
+                System.out.printf("%-10s %-20s %-20s %-20s %-10s %-10s %-10s%n", "ID", "Model", "License Number", "Owner Name", "Type", "Status", "Vehicle Number");
+                System.out.println("----------------------------------------------------------------------------------------------------");
+
+                // Print each vehicle in a row
+                for (Vehicle vehicle : vehicles) {
+                    System.out.printf("%-10d %-20s %-20s %-20s %-10s %-10s %-10s%n",
+                            vehicle.getId(), vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType(), vehicle.getStatus(), vehicle.getVehicle_number());
+                }
+
+                // Prompt user to approve or deny
+                System.out.print("\nEnter vehicle ID to approve/deny (or 0 to return to previous menu): ");
+                int vehicleId = scanner.nextInt();
+                if (vehicleId == 0) {
+                    return;  // Exit to previous menu
+                }
+
+                System.out.print("Enter 1 to approve, 2 to deny: ");
+                int action = scanner.nextInt();
+
+                boolean success;
+                if (action == 1) {
+                    success = userController.approveVehicleRegistration(vehicleId);
+                    if (success) {
+                        System.out.println("Vehicle registration approved.");
+                    } else {
+                        System.out.println("Failed to approve vehicle registration.");
+                    }
+                } else if (action == 2) {
+                    success = userController.denyVehicleRegistration(vehicleId);
+                    if (success) {
+                        System.out.println("Vehicle registration denied.");
+                    } else {
+                        System.out.println("Failed to deny vehicle registration.");
+                    }
+                } else {
+                    System.out.println("Invalid action. Please enter 1 to approve or 2 to deny.");
+                }
             }
         }
     }
 
     private static void viewDrivingLicenses(Scanner scanner) {
-        List<License> licenses = userController.getAllLicenses();
+        while (true) {
+            List<License> licenses = userController.getAllLicenses();
 
-        if (licenses.isEmpty()) {
-            System.out.println("No pending licenses.");
-            return;
-        }
-
-        // Print table header
-        System.out.printf("%-10s %-30s %-20s %-10s %-10s\n", "ID", "Name", "Aadhar", "Status", "License Number" );
-        System.out.println("------------------------------------------------------------------------------------------------");
-
-        // Print each license in a table format
-        for (License license : licenses) {
-            System.out.printf("%-10d %-30s %-20s %-10s %-10s\n",
-                    license.getId(),
-                    license.getName(),
-                    license.getAadhar(),
-                    license.getStatus(),
-                    license.getLicense_number() != null ? license.getLicense_number() : "N/A");
-        }
-
-        System.out.print("Enter license ID to approve/deny: ");
-        int licenseId = scanner.nextInt();
-        System.out.print("Enter 1 to approve, 2 to deny: ");
-        int action = scanner.nextInt();
-
-        if (action == 1) {
-            boolean success = userController.approveLicense(licenseId);
-            if (success) {
-                System.out.println("License approved and license number generated.");
-            } else {
-                System.out.println("Failed to approve license.");
+            if (licenses.isEmpty()) {
+                System.out.println("No pending licenses.");
+                return;
             }
-        } else if (action == 2) {
-            boolean success = userController.denyLicense(licenseId);
-            if (success) {
-                System.out.println("License denied.");
-            } else {
-                System.out.println("Failed to deny license.");
+
+            // Print table header
+            System.out.printf("%-10s %-30s %-20s %-10s %-10s%n", "ID", "Name", "Aadhar", "Status", "License Number");
+            System.out.println("------------------------------------------------------------------------------------------------");
+
+            // Print each license in a table format
+            for (License license : licenses) {
+                System.out.printf("%-10d %-30s %-20s %-10s %-10s%n",
+                        license.getId(),
+                        license.getName(),
+                        license.getAadhar(),
+                        license.getStatus(),
+                        license.getLicense_number() != null ? license.getLicense_number() : "N/A");
             }
-        } else {
-            System.out.println("Invalid action.");
+
+            System.out.print("Enter license ID to approve/deny (or 0 to return to previous menu): ");
+            int licenseId = scanner.nextInt();
+            if (licenseId == 0) {
+                return;  // Exit to previous menu
+            }
+
+            System.out.print("Enter 1 to approve, 2 to deny: ");
+            int action = scanner.nextInt();
+
+            if (action == 1) {
+                boolean success = userController.approveLicense(licenseId);
+                if (success) {
+                    System.out.println("License approved and license number generated.");
+                } else {
+                    System.out.println("Failed to approve license.");
+                }
+            } else if (action == 2) {
+                boolean success = userController.denyLicense(licenseId);
+                if (success) {
+                    System.out.println("License denied.");
+                } else {
+                    System.out.println("Failed to deny license.");
+                }
+            } else {
+                System.out.println("Invalid action.");
+            }
         }
     }
+
 
 
 
@@ -217,7 +231,15 @@ public class Main {
         String deadlineStr = scanner.next();
         Date deadline = Date.valueOf(deadlineStr);
 
-        Challan challan = new Challan(vehicleNumber, challanType, amount, deadline, "Unpaid", loggedInUser.getId());
+        // Fetch user ID based on vehicle number
+        int userId = userController.getUserIdByVehicleNumber(vehicleNumber);
+
+        if (userId == -1) {
+            System.out.println("Invalid vehicle number! Please try again.");
+            return;
+        }
+
+        Challan challan = new Challan(vehicleNumber, challanType, amount, deadline, "Unpaid", userId);
         boolean success = userController.generateChallan(challan);
 
         if (success) {
@@ -226,6 +248,7 @@ public class Main {
             System.out.println("Failed to generate challan! Please try again.");
         }
     }
+
 
     private static void showUserMenu(Scanner scanner) {
         while (true) {
@@ -308,16 +331,46 @@ public class Main {
     private static void payChallan(Scanner scanner) {
         System.out.print("Enter vehicle number: ");
         String vehicleNumber = scanner.next();
-        System.out.print("Enter challan type: ");
-        String challanType = scanner.next();
-        System.out.print("Enter amount: ");
-        double amount = scanner.nextDouble();
-        System.out.print("Enter deadline (yyyy-mm-dd): ");
-        String deadlineStr = scanner.next();
-        Date deadline = Date.valueOf(deadlineStr);
 
-        Challan challan = new Challan(vehicleNumber, challanType, amount, deadline, "Unpaid", loggedInUser.getId());
-        boolean success = userController.payChallan(challan);
+        // Retrieve all challans for the given vehicle number
+        List<Challan> challans = userController.getChallansByVehicleNumber(vehicleNumber);
+
+        if (challans.isEmpty()) {
+            System.out.println("No challans found for this vehicle.");
+            return;
+        }
+
+        // Display challans in table format
+        System.out.printf("%-10s %-20s %-20s %-10s %-10s %-15s%n", "ID", "Vehicle Number", "Challan Type", "Amount", "Deadline", "Status");
+        System.out.println("-----------------------------------------------------------------------------------------");
+        for (Challan challan : challans) {
+            System.out.printf("%-10d %-20s %-20s %-10.2f %-10s %-15s%n",
+                    challan.getId(), challan.getVehicleNumber(), challan.getChallanType(), challan.getAmount(), challan.getDeadline(), challan.getStatus());
+        }
+
+        // Prompt user to enter challan ID to pay
+        System.out.print("Enter the ID of the challan to pay: (or enter 0 for previous menu)");
+        int challanId = scanner.nextInt();
+        if (challanId == 0) {
+            return;  // Exit to previous menu
+        }
+
+        // Find the selected challan
+        Challan selectedChallan = null;
+        for (Challan challan : challans) {
+            if (challan.getId() == challanId) {
+                selectedChallan = challan;
+                break;
+            }
+        }
+
+        if (selectedChallan == null) {
+            System.out.println("Invalid challan ID.");
+            return;
+        }
+
+        // Process payment for the selected challan
+        boolean success = userController.payChallan(challanId);
 
         if (success) {
             System.out.println("Challan paid successfully!");
@@ -325,6 +378,7 @@ public class Main {
             System.out.println("Failed to pay challan! Please try again.");
         }
     }
+
 
     private static void viewProfile(Scanner scanner) {
         System.out.println("User Profile");

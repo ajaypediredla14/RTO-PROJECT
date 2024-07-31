@@ -125,17 +125,11 @@ public class UserController {
         }
     }
 
-    public boolean payChallan(Challan challan) {
-        String query = "INSERT INTO challans (vehicle_number, challan_type, amount, deadline, status, user_id) VALUES (?, ?, ?, ?, ?, ?)";
+    public boolean payChallan(int challanId) {
+        String query = "UPDATE challans SET status = 'Paid' WHERE id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
-
-            stmt.setString(1, challan.getVehicleNumber());
-            stmt.setString(2, challan.getChallanType());
-            stmt.setDouble(3, challan.getAmount());
-            stmt.setDate(4, challan.getDeadline());
-            stmt.setString(5, challan.getStatus());
-            stmt.setInt(6, challan.getUserId());
+            stmt.setInt(1, challanId);
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -193,7 +187,7 @@ public class UserController {
     }
 
     public boolean denyVehicleRegistration(int vehicleId) {
-        String query = "UPDATE vehicles SET status = 'Denied' WHERE id = ?";
+        String query = "UPDATE vehicles SET vehicle_number=NULL, status = 'Denied' WHERE id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
 
@@ -207,6 +201,24 @@ public class UserController {
             return false;
         }
     }
+
+    public int getUserIdByVehicleNumber(String vehicleNumber) {
+        String query = "SELECT user_id FROM vehicles WHERE vehicle_number = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setString(1, vehicleNumber);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("user_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if vehicle number is not found
+    }
+
 
     private String generateVehicleNumber() {
         // Generate a random vehicle number
@@ -235,7 +247,7 @@ public class UserController {
 
     // Deny license
     public boolean denyLicense(int licenseId) {
-        String query = "UPDATE licenses SET license_number = NULL WHERE id = ?";
+        String query = "UPDATE licenses SET status='denied', license_number = NULL WHERE id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, licenseId);
@@ -348,6 +360,7 @@ public class UserController {
 
     public List<Challan> getChallans(int userId) {
         List<Challan> challans = new ArrayList<>();
+//        System.out.println("checking+"+userId);
         String query = "SELECT * FROM challans WHERE user_id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -364,6 +377,8 @@ public class UserController {
                         rs.getString("status"),
                         rs.getInt("user_id")
                 );
+                challan.setId(rs.getInt("id"));
+                challan.setStatus(rs.getString("status"));
                 challans.add(challan);
             }
         } catch (SQLException e) {
@@ -371,6 +386,35 @@ public class UserController {
         }
         return challans;
     }
+
+    public List<Challan> getChallansByVehicleNumber(String vehicleNumber) {
+        List<Challan> challans = new ArrayList<>();
+        String query = "SELECT * FROM challans WHERE vehicle_number = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setString(1, vehicleNumber);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Challan challan = new Challan(
+                        rs.getString("vehicle_number"),
+                        rs.getString("challan_type"),
+                        rs.getDouble("amount"),
+                        rs.getDate("deadline"),
+                        rs.getString("status"),
+                        rs.getInt("user_id")
+                );
+                challan.setId(rs.getInt("id"));
+                challan.setStatus(rs.getString("status"));
+                challans.add(challan);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return challans;
+    }
+
 
     public boolean generateChallan(Challan challan) {
         String query = "INSERT INTO challans (vehicle_number, challan_type, amount, deadline, status, user_id) VALUES (?, ?, ?, ?, ?, ?)";
