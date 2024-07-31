@@ -88,9 +88,10 @@ public class Main {
     private static void showAdminMenu(Scanner scanner) {
         while (true) {
             System.out.println("Admin Menu");
-            System.out.println("1. View Vehicle Registrations");
-            System.out.println("2. Generate Challan");
-            System.out.println("3. Logout");
+            System.out.println("1. View/Update Vehicle Registrations");
+            System.out.println("2. View/Update Driving Licenses");  // New option for licenses
+            System.out.println("3. Generate Challan");
+            System.out.println("4. Logout");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
 
@@ -99,11 +100,14 @@ public class Main {
                     viewVehicleRegistrations(scanner);
                     break;
                 case 2:
-                    generateChallan(scanner);
+                    viewDrivingLicenses(scanner);  // New method for licenses
                     break;
                 case 3:
+                    generateChallan(scanner);
+                    break;
+                case 4:
                     loggedInUserToken = null;
-                    return;
+                    return;  // Exit admin menu
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
@@ -118,13 +122,13 @@ public class Main {
             System.out.println("No pending vehicle registrations.");
         } else {
             // Print the table header
-            System.out.printf("%-10s %-20s %-20s %-20s %-10s %-10s%n", "ID", "Model", "License Number", "Owner Name", "Type", "Status");
-            System.out.println("---------------------------------------------------------------------");
+            System.out.printf("%-10s %-20s %-20s %-20s %-10s %-10s %-10s%n", "ID", "Model", "License Number", "Owner Name", "Type", "Status","vehicle_number");
+            System.out.println("----------------------------------------------------------------------------------------------------");
 
             // Print each vehicle in a row
             for (Vehicle vehicle : vehicles) {
-                System.out.printf("%-10d %-20s %-20s %-20s %-10s %-10s%n",
-                        vehicle.getId(), vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType(), vehicle.getStatus());
+                System.out.printf("%-10d %-20s %-20s %-20s %-10s %-10s %-10s%n",
+                        vehicle.getId(), vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType(), vehicle.getStatus(),vehicle.getVehicle_number());
             }
 
             // Prompt user to approve or deny
@@ -153,6 +157,53 @@ public class Main {
             }
         }
     }
+
+    private static void viewDrivingLicenses(Scanner scanner) {
+        List<License> licenses = userController.getAllLicenses();
+
+        if (licenses.isEmpty()) {
+            System.out.println("No pending licenses.");
+            return;
+        }
+
+        // Print table header
+        System.out.printf("%-10s %-30s %-20s %-10s %-10s\n", "ID", "Name", "Aadhar", "Status", "License Number" );
+        System.out.println("------------------------------------------------------------------------------------------------");
+
+        // Print each license in a table format
+        for (License license : licenses) {
+            System.out.printf("%-10d %-30s %-20s %-10s %-10s\n",
+                    license.getId(),
+                    license.getName(),
+                    license.getAadhar(),
+                    license.getStatus(),
+                    license.getLicense_number() != null ? license.getLicense_number() : "N/A");
+        }
+
+        System.out.print("Enter license ID to approve/deny: ");
+        int licenseId = scanner.nextInt();
+        System.out.print("Enter 1 to approve, 2 to deny: ");
+        int action = scanner.nextInt();
+
+        if (action == 1) {
+            boolean success = userController.approveLicense(licenseId);
+            if (success) {
+                System.out.println("License approved and license number generated.");
+            } else {
+                System.out.println("Failed to approve license.");
+            }
+        } else if (action == 2) {
+            boolean success = userController.denyLicense(licenseId);
+            if (success) {
+                System.out.println("License denied.");
+            } else {
+                System.out.println("Failed to deny license.");
+            }
+        } else {
+            System.out.println("Invalid action.");
+        }
+    }
+
 
 
     private static void generateChallan(Scanner scanner) {
@@ -219,7 +270,7 @@ public class Main {
         System.out.print("Enter type: ");
         String type = scanner.next();
 
-        Vehicle vehicle = new Vehicle(model, licenseNumber, ownerName, type, loggedInUser.getId(),"pending");
+        Vehicle vehicle = new Vehicle(model, licenseNumber, ownerName, type, loggedInUser.getId(),"pending",null);
         boolean success = userController.registerVehicle(vehicle);
 
         if (success) {
@@ -243,7 +294,7 @@ public class Main {
         System.out.print("Enter transaction ID: ");
         String transactionId = scanner.next();
 
-        License license = new License(name, age, aadhar, address, gender, transactionId, loggedInUser.getId(),"pending");
+        License license = new License(name, age, aadhar, address, gender, transactionId, loggedInUser.getId(),"pending",null);
 
         boolean success = userController.registerLicense(license);
 
@@ -287,11 +338,11 @@ public class Main {
         if (vehicles.isEmpty()) {
             System.out.println("No vehicles registered.");
         } else {
-            System.out.printf("%-10s %-20s %-20s %-20s %-10s %-10s%n", "ID", "Model", "License Number", "Owner Name", "Type" ,"Status");
-            System.out.println("---------------------------------------------------------------------");
+            System.out.printf("%-10s %-20s %-20s %-20s %-20s %-10s %-10s%n", "ID","Vehicle Number", "Model", "License Number", "Owner Name", "Type" ,"Status");
+            System.out.println("-------------------------------------------------------------------------------------------------------------------------------");
             for (Vehicle vehicle : vehicles) {
-                System.out.printf("%-10d %-20s %-20s %-20s %-10s %-10s%n",
-                        vehicle.getId(), vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType(),vehicle.getStatus());
+                System.out.printf("%-10d %-20s %-20s %-20s %-20s %-10s %-10s%n",
+                        vehicle.getId(),vehicle.getVehicle_number(), vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType(),vehicle.getStatus());
             }
         }
 
@@ -301,11 +352,11 @@ public class Main {
         if (licenses.isEmpty()) {
             System.out.println("No licenses registered.");
         } else {
-            System.out.printf("%-10s %-20s %-5s %-20s %-30s %-10s %-20s%n", "ID", "Name", "Age", "Aadhar", "Address", "Gender", "Transaction ID","Status");
-            System.out.println("---------------------------------------------------------------------------------------------");
+            System.out.printf("%-10s %-20s %-20s %-5s %-20s %-30s %-10s %-20s %-20s%n", "ID","License No", "Name", "Age", "Aadhar", "Address", "Gender", "Transaction ID","Status");
+            System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------");
             for (License license : licenses) {
-                System.out.printf("%-10d %-20s %-5d %-20s %-30s %-10c %-20s %-20s% n",
-                        license.getId(), license.getName(), license.getAge(), license.getAadhar(), license.getAddress(), license.getGender(), license.getTransactionId(),license.getStatus());
+                System.out.printf("%-10d %-20s %-20s %-5d %-20s %-30s %-10c %-20s %-20s%n",
+                        license.getId(),license.getLicense_number(), license.getName(), license.getAge(), license.getAadhar(), license.getAddress(), license.getGender(), license.getTransactionId(),license.getStatus());
             }
         }
 

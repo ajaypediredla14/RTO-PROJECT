@@ -103,7 +103,7 @@ public class UserController {
     }
 
     public boolean registerLicense(License license) {
-        String query = "INSERT INTO licenses (name, age, aadhar, address, gender, transaction_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO licenses (name, age, aadhar, address, gender, transaction_id, user_id,status) VALUES (?, ?, ?, ?, ?, ?, ? ,?)";
         try (Connection connection = Database.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
 
@@ -114,6 +114,7 @@ public class UserController {
             stmt.setString(5, String.valueOf(license.getGender()));
             stmt.setString(6, license.getTransactionId());
             stmt.setInt(7, license.getUserId());
+            stmt.setString(8, license.getStatus());
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -160,7 +161,8 @@ public class UserController {
                         rs.getString("owner_name"),
                         rs.getString("type"),
                         rs.getInt("user_id"),
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getString("vehicle_number")
                 );
                 vehicle.setId(rs.getInt("id"));
                 vehicle.setStatus(rs.getString("status"));
@@ -213,6 +215,44 @@ public class UserController {
         return "VEH" + number;
     }
 
+    // Approve license and generate license number
+    public boolean approveLicense(int licenseId) {
+        // Generate a unique license number
+        String licenseNumber = generateUniqueLicenseNumber();
+
+        // Update the license in the database
+        String query = "UPDATE licenses SET status = 'Completed', license_number = ? WHERE id = ?";;
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, licenseNumber);
+            statement.setInt(2, licenseId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Deny license
+    public boolean denyLicense(int licenseId) {
+        String query = "UPDATE licenses SET license_number = NULL WHERE id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, licenseId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Generate a unique license number (this is a placeholder, implement accordingly)
+    private String generateUniqueLicenseNumber() {
+        // Generate a unique number or use a UUID
+        return "LIC-" + System.currentTimeMillis();
+    }
+
+
     public List<License> getLicenses(int userId) {
         List<License> licenses = new ArrayList<>();
         String query = "SELECT * FROM licenses WHERE user_id = ?";
@@ -231,8 +271,43 @@ public class UserController {
                         rs.getString("gender").charAt(0),
                         rs.getString("transaction_id"),
                         rs.getInt("user_id"),
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getString("license_number")
                 );
+                license.setId(rs.getInt("id"));
+                license.setStatus(rs.getString("status"));
+
+                licenses.add(license);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return licenses;
+    }
+
+    public List<License> getAllLicenses() {
+        List<License> licenses = new ArrayList<>();
+        String query = "SELECT * FROM licenses";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+//            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                License license = new License(
+                        rs.getString("name"),
+                        rs.getInt("age"),
+                        rs.getString("aadhar"),
+                        rs.getString("address"),
+                        rs.getString("gender").charAt(0),
+                        rs.getString("transaction_id"),
+                        rs.getInt("user_id"),
+                        rs.getString("status"),
+                        rs.getString("license_number")
+                );
+                license.setId(rs.getInt("id"));
+                license.setStatus(rs.getString("status"));
                 licenses.add(license);
             }
         } catch (SQLException e) {
@@ -257,7 +332,8 @@ public class UserController {
                         rs.getString("owner_name"),
                         rs.getString("type"),
                         rs.getInt("user_id"),
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getString("vehicle_number")
 
                 );
                 vehicle.setId(rs.getInt("id"));

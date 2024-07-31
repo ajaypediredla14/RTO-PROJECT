@@ -8,14 +8,16 @@ public class Vehicle {
     private String type;
     private int userId;
     private String status; // Added status field
+    private String vehicle_number;
 
-    public Vehicle(String model, String licenseNumber, String ownerName, String type, int userId,String status) {
+    public Vehicle(String model, String licenseNumber, String ownerName, String type, int userId,String status,String vehicle_number) {
         this.model = model;
         this.licenseNumber = licenseNumber;
         this.ownerName = ownerName;
         this.type = type;
         this.userId = userId;
         this.status=status;
+        this.vehicle_number=vehicle_number;
     }
 
     // Getters and Setters
@@ -37,6 +39,10 @@ public class Vehicle {
 
     public String getLicenseNumber() {
         return licenseNumber;
+    }
+
+    public String getVehicle_number() {
+        return vehicle_number;
     }
 
     public void setLicenseNumber(String licenseNumber) {

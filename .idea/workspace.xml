@@ -7,6 +7,8 @@
     <list default="true" id="46c48427-02e6-4061-9ad5-19819e424448" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/License.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/License.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/Vehicle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Vehicle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,11 +72,58 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1722409836116</updated>
-      <workItem from="1722409837237" duration="10703000" />
+      <workItem from="1722409837237" duration="17638000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
+          <line>148</line>
+          <properties class="controller.UserController" method="getPendingVehicleRegistrations">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
+          <line>176</line>
+          <properties class="controller.UserController" method="approveVehicleRegistration">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/controller/AdminController.java</url>
+          <line>114</line>
+          <properties class="controller.AdminController">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
+          <line>287</line>
+          <properties class="controller.UserController" method="getAllLicenses">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
+          <line>256</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
