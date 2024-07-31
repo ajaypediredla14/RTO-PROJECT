@@ -1,339 +1,285 @@
 package view;
 
 import controller.UserController;
-import model.User;
-import model.Vehicle;
-import model.License;
-import model.Challan;
-import model.Database;
+import model.*;
 
 import java.sql.Date;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.UUID;
 
 public class Main {
 
     private static UserController userController = new UserController();
-    private static Scanner scanner = new Scanner(System.in);
-    private static String token = null;
-    private static int userId;
-    private static char userType;
+    private static String loggedInUserToken;
+    private static User loggedInUser;
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
         while (true) {
-            System.out.println("1. Sign Up");
-            System.out.println("2. Login");
+            System.out.println("Welcome to the RTO System");
+            System.out.println("1. Login");
+            System.out.println("2. Sign Up");
             System.out.println("3. Exit");
-            System.out.print("Enter choice: ");
+            System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume newline
 
             switch (choice) {
                 case 1:
-                    signUp();
+                    login(scanner);
                     break;
                 case 2:
-                    login();
+                    signUp(scanner);
                     break;
                 case 3:
                     System.exit(0);
-                    break;
                 default:
-                    System.out.println("Invalid choice. Try again.");
+                    System.out.println("Invalid choice. Please try again.");
+            }
+
+            if (loggedInUserToken != null) {
+                if (loggedInUser.getType() == 'A') {
+                    showAdminMenu(scanner);
+                } else {
+                    showUserMenu(scanner);
+                }
             }
         }
     }
 
-    private static void signUp() {
+    private static void login(Scanner scanner) {
         System.out.print("Enter email: ");
-        String email = scanner.nextLine();
+        String email = scanner.next();
         System.out.print("Enter password: ");
-        String password = scanner.nextLine();
+        String password = scanner.next();
+
+        loggedInUserToken = userController.loginUser(email, password);
+        if (loggedInUserToken != null) {
+            System.out.println("Login successful! Token: " + loggedInUserToken);
+            loggedInUser = userController.getUserByEmail(email);
+        } else {
+            System.out.println("Login failed! Please check your email and password.");
+        }
+    }
+
+    private static void signUp(Scanner scanner) {
         System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter type (A for Admin, U for User): ");
-        char type = scanner.nextLine().charAt(0);
-        System.out.print("Enter mobile: ");
-        String mobile = scanner.nextLine();
-        System.out.print("Confirm password: ");
-        String confirmPassword = scanner.nextLine();
-
-        if (!password.equals(confirmPassword)) {
-            System.out.println("Passwords do not match.");
-            return;
-        }
-
-        User user = new User(email, password, name, type, mobile);
-        if (userController.registerUser(user)) {
-            System.out.println("User registered successfully.");
-        } else {
-            System.out.println("Registration failed.");
-        }
-    }
-
-    private static void login() {
+        String name = scanner.next();
         System.out.print("Enter email: ");
-        String email = scanner.nextLine();
+        String email = scanner.next();
         System.out.print("Enter password: ");
-        String password = scanner.nextLine();
+        String password = scanner.next();
+        System.out.print("Enter mobile: ");
+        String mobile = scanner.next();
+//        System.out.print("Enter type (A for Admin, U for User): ");
+//        char type = scanner.next().charAt(0);
 
-        token = userController.loginUser(email, password);
-        if (token != null) {
-            userId = retrieveUserId(email);
-            userType = getUserType(email);
-            System.out.println("Login successful! Token: " + token);
-            if (userType == 'A') {
-                adminMenu();
-            } else if (userType == 'U') {
-                userMenu();
-            }
+        User user = new User(name, email, password, 'U', mobile);
+        boolean success = userController.registerUser(user);
+
+        if (success) {
+            System.out.println("Sign Up successful!");
         } else {
-            System.out.println("Login failed.");
+            System.out.println("Sign Up failed! Please try again.");
         }
     }
 
-    private static void adminMenu() {
+    private static void showAdminMenu(Scanner scanner) {
         while (true) {
-            System.out.println("Admin Menu:");
-            System.out.println("1. View Applied Vehicle Registrations");
-            System.out.println("2. View Applied Driving License Registrations");
-            System.out.println("3. Generate Challans");
-            System.out.println("4. Exit");
-            System.out.print("Enter choice: ");
+            System.out.println("Admin Menu");
+            System.out.println("1. View Vehicle Registrations");
+            System.out.println("2. Generate Challan");
+            System.out.println("3. Logout");
+            System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume newline
 
             switch (choice) {
                 case 1:
-                    viewAppliedVehicleRegistrations();
+                    viewVehicleRegistrations(scanner);
                     break;
                 case 2:
-                    viewAppliedDrivingLicenses();
+                    generateChallan(scanner);
                     break;
                 case 3:
-                    generateChallan();
-                    break;
-                case 4:
+                    loggedInUserToken = null;
                     return;
                 default:
-                    System.out.println("Invalid choice. Try again.");
+                    System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
-    private static void userMenu() {
+    private static void viewVehicleRegistrations(Scanner scanner) {
+        List<Vehicle> vehicles = userController.getPendingVehicleRegistrations();
+        for (Vehicle vehicle : vehicles) {
+            System.out.println(vehicle);
+        }
+
+        System.out.print("Enter vehicle ID to approve/deny: ");
+        int vehicleId = scanner.nextInt();
+        System.out.print("Enter 1 to approve, 2 to deny: ");
+        int action = scanner.nextInt();
+
+        if (action == 1) {
+            boolean success = userController.approveVehicleRegistration(vehicleId);
+            if (success) {
+                System.out.println("Vehicle registration approved.");
+            } else {
+                System.out.println("Failed to approve vehicle registration.");
+            }
+        } else if (action == 2) {
+            boolean success = userController.denyVehicleRegistration(vehicleId);
+            if (success) {
+                System.out.println("Vehicle registration denied.");
+            } else {
+                System.out.println("Failed to deny vehicle registration.");
+            }
+        } else {
+            System.out.println("Invalid action.");
+        }
+    }
+
+    private static void generateChallan(Scanner scanner) {
+        System.out.print("Enter vehicle number: ");
+        String vehicleNumber = scanner.next();
+        System.out.print("Enter challan type: ");
+        String challanType = scanner.next();
+        System.out.print("Enter amount: ");
+        double amount = scanner.nextDouble();
+        System.out.print("Enter deadline (yyyy-mm-dd): ");
+        String deadlineStr = scanner.next();
+        Date deadline = Date.valueOf(deadlineStr);
+
+        Challan challan = new Challan(vehicleNumber, challanType, amount, deadline, "Unpaid", loggedInUser.getId());
+        boolean success = userController.generateChallan(challan);
+
+        if (success) {
+            System.out.println("Challan generated successfully!");
+        } else {
+            System.out.println("Failed to generate challan! Please try again.");
+        }
+    }
+
+    private static void showUserMenu(Scanner scanner) {
         while (true) {
-            System.out.println("User Menu:");
+            System.out.println("User Menu");
             System.out.println("1. Vehicle Registration");
             System.out.println("2. Driving License Registration");
             System.out.println("3. Pay Challans");
             System.out.println("4. View Profile");
-            System.out.println("5. Exit");
-            System.out.print("Enter choice: ");
+            System.out.println("5. Logout");
+            System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume newline
 
             switch (choice) {
                 case 1:
-                    registerVehicle();
+                    registerVehicle(scanner);
                     break;
                 case 2:
-                    registerLicense();
+                    registerLicense(scanner);
                     break;
                 case 3:
-                    payChallan();
+                    payChallan(scanner);
                     break;
                 case 4:
-                    viewProfile();
+                    viewProfile(scanner);
                     break;
                 case 5:
+                    loggedInUserToken = null;
                     return;
                 default:
-                    System.out.println("Invalid choice. Try again.");
+                    System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
-    private static void registerVehicle() {
-        System.out.print("Enter vehicle model: ");
-        String model = scanner.nextLine();
-        System.out.print("Enter driving license number: ");
-        String licenseNumber = scanner.nextLine();
-        System.out.print("Enter vehicle owner name: ");
-        String ownerName = scanner.nextLine();
-        System.out.print("Enter vehicle type: ");
-        String type = scanner.nextLine();
+    private static void registerVehicle(Scanner scanner) {
+        System.out.print("Enter model: ");
+        String model = scanner.next();
+        System.out.print("Enter license number: ");
+        String licenseNumber = scanner.next();
+        System.out.print("Enter owner name: ");
+        String ownerName = scanner.next();
+        System.out.print("Enter type: ");
+        String type = scanner.next();
 
-        Vehicle vehicle = new Vehicle(model, licenseNumber, ownerName, type, userId);
-        if (userController.registerVehicle(vehicle)) {
-            System.out.println("Vehicle registered successfully.");
+        Vehicle vehicle = new Vehicle(model, licenseNumber, ownerName, type, loggedInUser.getId());
+        boolean success = userController.registerVehicle(vehicle);
+
+        if (success) {
+            System.out.println("Vehicle registration successful!");
         } else {
-            System.out.println("Vehicle registration failed.");
+            System.out.println("Vehicle registration failed! Please try again.");
         }
     }
 
-    private static void registerLicense() {
+    private static void registerLicense(Scanner scanner) {
         System.out.print("Enter name: ");
-        String name = scanner.nextLine();
+        String name = scanner.next();
         System.out.print("Enter age: ");
         int age = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
         System.out.print("Enter aadhar: ");
-        String aadhar = scanner.nextLine();
+        String aadhar = scanner.next();
         System.out.print("Enter address: ");
-        String address = scanner.nextLine();
+        String address = scanner.next();
         System.out.print("Enter gender (M/F): ");
-        char gender = scanner.nextLine().charAt(0);
+        char gender = scanner.next().charAt(0);
         System.out.print("Enter transaction ID: ");
-        String transactionId = scanner.nextLine();
+        String transactionId = scanner.next();
 
-        License license = new License(name, age, aadhar, address, gender, transactionId, userId);
-        if (userController.registerLicense(license)) {
-            System.out.println("License registered successfully.");
+        License license = new License(name, age, aadhar, address, gender, transactionId, loggedInUser.getId());
+        boolean success = userController.registerLicense(license);
+
+        if (success) {
+            System.out.println("License registration successful!");
         } else {
-            System.out.println("License registration failed.");
+            System.out.println("License registration failed! Please try again.");
         }
     }
 
-    private static void payChallan() {
+    private static void payChallan(Scanner scanner) {
         System.out.print("Enter vehicle number: ");
-        String vehicleNumber = scanner.nextLine();
+        String vehicleNumber = scanner.next();
         System.out.print("Enter challan type: ");
-        String challanType = scanner.nextLine();
+        String challanType = scanner.next();
         System.out.print("Enter amount: ");
         double amount = scanner.nextDouble();
         System.out.print("Enter deadline (yyyy-mm-dd): ");
         String deadlineStr = scanner.next();
         Date deadline = Date.valueOf(deadlineStr);
-        scanner.nextLine();  // Consume newline
-        System.out.print("Enter status: ");
-        String status = scanner.nextLine();
 
-        Challan challan = new Challan(vehicleNumber, challanType, amount, deadline, status, userId);
-        if (userController.payChallan(challan)) {
-            System.out.println("Challan paid successfully.");
+        Challan challan = new Challan(vehicleNumber, challanType, amount, deadline, "Unpaid", loggedInUser.getId());
+        boolean success = userController.payChallan(challan);
+
+        if (success) {
+            System.out.println("Challan paid successfully!");
         } else {
-            System.out.println("Challan payment failed.");
+            System.out.println("Failed to pay challan! Please try again.");
         }
     }
 
-    private static void viewProfile() {
-        List<Vehicle> vehicles = userController.getVehicles(userId);
-        List<License> licenses = userController.getLicenses(userId);
+    private static void viewProfile(Scanner scanner) {
+        System.out.println("User Profile");
+        System.out.println("Name: " + loggedInUser.getName());
+        System.out.println("Email: " + loggedInUser.getEmail());
+        System.out.println("Mobile: " + loggedInUser.getMobile());
 
         System.out.println("Vehicles:");
-        System.out.printf("%-20s %-20s %-20s %-20s\n", "Model", "License Number", "Owner Name", "Type");
+        List<Vehicle> vehicles = userController.getVehicles(loggedInUser.getId());
         for (Vehicle vehicle : vehicles) {
-            System.out.printf("%-20s %-20s %-20s %-20s\n",
-                    vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType());
+            System.out.println(vehicle);
         }
 
-        System.out.println("Driving Licenses:");
-        System.out.printf("%-20s %-5s %-20s %-20s %-10s %-20s\n", "Name", "Age", "Aadhar", "Address", "Gender", "Transaction ID");
+        System.out.println("Licenses:");
+        List<License> licenses = userController.getLicenses(loggedInUser.getId());
         for (License license : licenses) {
-            System.out.printf("%-20s %-5d %-20s %-20s %-10c %-20s\n",
-                    license.getName(), license.getAge(), license.getAadhar(), license.getAddress(), license.getGender(), license.getTransactionId());
+            System.out.println(license);
         }
-    }
 
-    private static void viewAppliedVehicleRegistrations() {
-        String query = "SELECT * FROM vehicles WHERE user_id IS NULL";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-
-            System.out.println("Applied Vehicle Registrations:");
-            System.out.printf("%-10s %-20s %-20s %-20s %-20s\n", "ID", "Model", "License Number", "Owner Name", "Type");
-            while (rs.next()) {
-                System.out.printf("%-10d %-20s %-20s %-20s %-20s\n",
-                        rs.getInt("id"), rs.getString("model"), rs.getString("license_number"),
-                        rs.getString("owner_name"), rs.getString("type"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        System.out.println("Challans:");
+        List<Challan> challans = userController.getChallans(loggedInUser.getId());
+        for (Challan challan : challans) {
+            System.out.println(challan);
         }
-    }
-
-    private static void viewAppliedDrivingLicenses() {
-        String query = "SELECT * FROM licenses WHERE user_id IS NULL";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-
-            System.out.println("Applied Driving Licenses:");
-            System.out.printf("%-10s %-20s %-5s %-20s %-20s %-10s %-20s\n", "ID", "Name", "Age", "Aadhar", "Address", "Gender", "Transaction ID");
-            while (rs.next()) {
-                System.out.printf("%-10d %-20s %-5d %-20s %-20s %-10c %-20s\n",
-                        rs.getInt("id"), rs.getString("name"), rs.getInt("age"), rs.getString("aadhar"),
-                        rs.getString("address"), rs.getString("gender").charAt(0), rs.getString("transaction_id"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void generateChallan() {
-        System.out.print("Enter vehicle number: ");
-        String vehicleNumber = scanner.nextLine();
-        System.out.print("Enter challan type: ");
-        String challanType = scanner.nextLine();
-        System.out.print("Enter amount: ");
-        double amount = scanner.nextDouble();
-        System.out.print("Enter deadline (yyyy-mm-dd): ");
-        String deadlineStr = scanner.next();
-        Date deadline = Date.valueOf(deadlineStr);
-        scanner.nextLine();  // Consume newline
-        System.out.print("Enter status: ");
-        String status = scanner.nextLine();
-
-        Challan challan = new Challan(vehicleNumber, challanType, amount, deadline, status, userId);
-        if (userController.generateChallan(challan)) {
-            System.out.println("Challan generated successfully.");
-        } else {
-            System.out.println("Challan generation failed.");
-        }
-    }
-
-    private static int retrieveUserId(String email) {
-        int id = 0;
-        String query = "SELECT id FROM users WHERE email = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
-
-            stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                id = rs.getInt("id");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return id;
-    }
-
-    private static char getUserType(String email) {
-        char type = 'U'; // Default to 'User'
-        String query = "SELECT type FROM users WHERE email = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
-
-            stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                type = rs.getString("type").charAt(0);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return type;
     }
 }
