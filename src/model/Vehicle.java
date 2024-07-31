@@ -9,12 +9,13 @@ public class Vehicle {
     private int userId;
     private String status; // Added status field
 
-    public Vehicle(String model, String licenseNumber, String ownerName, String type, int userId) {
+    public Vehicle(String model, String licenseNumber, String ownerName, String type, int userId,String status) {
         this.model = model;
         this.licenseNumber = licenseNumber;
         this.ownerName = ownerName;
         this.type = type;
         this.userId = userId;
+        this.status=status;
     }
 
     // Getters and Setters

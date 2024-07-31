@@ -203,7 +203,7 @@ public class Main {
         System.out.print("Enter type: ");
         String type = scanner.next();
 
-        Vehicle vehicle = new Vehicle(model, licenseNumber, ownerName, type, loggedInUser.getId());
+        Vehicle vehicle = new Vehicle(model, licenseNumber, ownerName, type, loggedInUser.getId(),"pending");
         boolean success = userController.registerVehicle(vehicle);
 
         if (success) {
@@ -227,7 +227,8 @@ public class Main {
         System.out.print("Enter transaction ID: ");
         String transactionId = scanner.next();
 
-        License license = new License(name, age, aadhar, address, gender, transactionId, loggedInUser.getId());
+        License license = new License(name, age, aadhar, address, gender, transactionId, loggedInUser.getId(),"pending");
+
         boolean success = userController.registerLicense(license);
 
         if (success) {
@@ -264,22 +265,46 @@ public class Main {
         System.out.println("Email: " + loggedInUser.getEmail());
         System.out.println("Mobile: " + loggedInUser.getMobile());
 
-        System.out.println("Vehicles:");
+        // Display vehicles in table format
+        System.out.println("\nVehicles:");
         List<Vehicle> vehicles = userController.getVehicles(loggedInUser.getId());
-        for (Vehicle vehicle : vehicles) {
-            System.out.println(vehicle);
+        if (vehicles.isEmpty()) {
+            System.out.println("No vehicles registered.");
+        } else {
+            System.out.printf("%-10s %-20s %-20s %-20s %-10s %-10s%n", "ID", "Model", "License Number", "Owner Name", "Type" ,"Status");
+            System.out.println("---------------------------------------------------------------------");
+            for (Vehicle vehicle : vehicles) {
+                System.out.printf("%-10d %-20s %-20s %-20s %-10s %-10s%n",
+                        vehicle.getId(), vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType(),vehicle.getStatus());
+            }
         }
 
-        System.out.println("Licenses:");
+        // Display licenses in table format
+        System.out.println("\nLicenses:");
         List<License> licenses = userController.getLicenses(loggedInUser.getId());
-        for (License license : licenses) {
-            System.out.println(license);
+        if (licenses.isEmpty()) {
+            System.out.println("No licenses registered.");
+        } else {
+            System.out.printf("%-10s %-20s %-5s %-20s %-30s %-10s %-20s%n", "ID", "Name", "Age", "Aadhar", "Address", "Gender", "Transaction ID","Status");
+            System.out.println("---------------------------------------------------------------------------------------------");
+            for (License license : licenses) {
+                System.out.printf("%-10d %-20s %-5d %-20s %-30s %-10c %-20s %-20s% n",
+                        license.getId(), license.getName(), license.getAge(), license.getAadhar(), license.getAddress(), license.getGender(), license.getTransactionId(),license.getStatus());
+            }
         }
 
-        System.out.println("Challans:");
+        // Display challans in table format
+        System.out.println("\nChallans:");
         List<Challan> challans = userController.getChallans(loggedInUser.getId());
-        for (Challan challan : challans) {
-            System.out.println(challan);
+        if (challans.isEmpty()) {
+            System.out.println("No challans found.");
+        } else {
+            System.out.printf("%-10s %-20s %-20s %-10s %-10s %-15s%n", "ID", "Vehicle Number", "Challan Type", "Amount", "Deadline", "Status");
+            System.out.println("-----------------------------------------------------------------------------------------");
+            for (Challan challan : challans) {
+                System.out.printf("%-10d %-20s %-20s %-10.2f %-10s %-15s%n",
+                        challan.getId(), challan.getVehicleNumber(), challan.getChallanType(), challan.getAmount(), challan.getDeadline(), challan.getStatus());
+            }
         }
-    }
-}
+    }}
+

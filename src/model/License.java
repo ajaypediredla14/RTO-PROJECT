@@ -9,8 +9,9 @@ public class License {
     private char gender;
     private String transactionId;
     private int userId;
+    private String status;
 
-    public License(String name, int age, String aadhar, String address, char gender, String transactionId, int userId) {
+    public License(String name, int age, String aadhar, String address, char gender, String transactionId, int userId,String status) {
         this.name = name;
         this.age = age;
         this.aadhar = aadhar;
@@ -18,6 +19,7 @@ public class License {
         this.gender = gender;
         this.transactionId = transactionId;
         this.userId = userId;
+        this.status=status;
     }
 
     // Getters and setters
@@ -37,4 +39,11 @@ public class License {
     public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

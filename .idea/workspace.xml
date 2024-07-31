@@ -7,7 +7,7 @@
     <list default="true" id="46c48427-02e6-4061-9ad5-19819e424448" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/License.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/License.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/Vehicle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Vehicle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/Main.java" afterDir="false" />
     </list>
@@ -72,7 +72,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1722409836116</updated>
-      <workItem from="1722409837237" duration="7223000" />
+      <workItem from="1722409837237" duration="8617000" />
     </task>
     <servers />
   </component>

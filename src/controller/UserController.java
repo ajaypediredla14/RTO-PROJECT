@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import util.HashUtil;
 
 public class UserController {
 
@@ -20,7 +21,7 @@ public class UserController {
              PreparedStatement stmt = connection.prepareStatement(query)) {
 
             stmt.setString(1, user.getEmail());
-            stmt.setString(2, user.getPassword()); // Ensure the password is hashed
+            stmt.setString(2, HashUtil.hashPassword(user.getPassword())); // Make sure the password is hashed before storing
             stmt.setString(3, user.getName());
             stmt.setString(4, String.valueOf(user.getType()));
             stmt.setString(5, user.getMobile());
@@ -33,6 +34,7 @@ public class UserController {
             return false;
         }
     }
+
 
     // Add this method in UserController
     public User getUserByEmail(String email) {
@@ -61,7 +63,7 @@ public class UserController {
 
 
     public String loginUser(String email, String password) {
-        String query = "SELECT password, type FROM users WHERE email = ?";
+        String query = "SELECT password FROM users WHERE email = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
 
@@ -70,15 +72,15 @@ public class UserController {
 
             if (rs.next()) {
                 String storedPassword = rs.getString("password");
-                if (storedPassword.equals(password)) { // Use hashed password comparison
-                    return UUID.randomUUID().toString(); // Generate a token
+                if (storedPassword.equals(HashUtil.hashPassword(password))) { // Use hashed password comparison
+                    return java.util.UUID.randomUUID().toString(); // Generate a token
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
-    }
+}
 
     public boolean registerVehicle(Vehicle vehicle) {
         String query = "INSERT INTO vehicles (model, license_number, owner_name, type, user_id, status) VALUES (?, ?, ?, ?, ?, 'Pending')";
@@ -157,7 +159,8 @@ public class UserController {
                         rs.getString("license_number"),
                         rs.getString("owner_name"),
                         rs.getString("type"),
-                        rs.getInt("user_id")
+                        rs.getInt("user_id"),
+                        rs.getString("status")
                 );
                 vehicle.setId(rs.getInt("id"));
                 vehicle.setStatus(rs.getString("status"));
@@ -227,7 +230,8 @@ public class UserController {
                         rs.getString("address"),
                         rs.getString("gender").charAt(0),
                         rs.getString("transaction_id"),
-                        rs.getInt("user_id")
+                        rs.getInt("user_id"),
+                        rs.getString("status")
                 );
                 licenses.add(license);
             }
@@ -252,7 +256,9 @@ public class UserController {
                         rs.getString("license_number"),
                         rs.getString("owner_name"),
                         rs.getString("type"),
-                        rs.getInt("user_id")
+                        rs.getInt("user_id"),
+                        rs.getString("status")
+
                 );
                 vehicle.setId(rs.getInt("id"));
                 vehicle.setStatus(rs.getString("status"));
