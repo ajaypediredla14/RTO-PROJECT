@@ -9,6 +9,7 @@ public class Vehicle {
     private int userId;
     private String status; // Added status field
 
+    public Vehicle(){}
     public Vehicle(String model, String licenseNumber, String ownerName, String type, int userId,String status) {
         this.model = model;
         this.licenseNumber = licenseNumber;

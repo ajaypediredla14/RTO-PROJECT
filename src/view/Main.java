@@ -1,6 +1,8 @@
 package view;
 
 import controller.UserController;
+import controller.VehicleController;
+import controller.ChallanController;
 import model.*;
 
 import java.sql.Date;
@@ -253,6 +255,52 @@ public class Main {
             System.out.println("License registration failed! Please try again.");
         }
     }
+
+    private static void payUserChallan(Scanner scanner) {
+        Vehicle vehicle = VehicleController.userVehicle(loggedInUser.getId());
+        if (vehicle == null) {
+            System.out.println("No vehicle registered in your name.");
+            return;
+        }
+
+        List<Challan> challans = ChallanController.getChallansByVehicle(vehicle.getId());
+        if (challans.isEmpty()) {
+            System.out.println("No challans found for your vehicle.");
+            return;
+        }
+
+        System.out.println("Challans for your vehicle:");
+        for (Challan challan : challans) {
+            System.out.println("Challan ID: " + challan.getId() +
+                    ", Type: " + challan.getType() +
+                    ", Amount: " + challan.getAmount() +
+                    ", Deadline: " + challan.getDeadline() +
+                    ", Status: " + challan.getStatus());
+        }
+
+        System.out.print("Enter the Challan ID you want to pay: ");
+        int challanId = scanner.nextInt();
+        Challan selectedChallan = challans.stream()
+                .filter(c -> c.getId() == challanId)
+                .findFirst()
+                .orElse(null);
+
+        if (selectedChallan == null) {
+            System.out.println("Invalid Challan ID.");
+            return;
+        }
+
+        // Assume payment is made here and update the status
+        selectedChallan.setStatus("Paid");
+        boolean success = ChallanController.updateChallanStatus(selectedChallan);
+
+        if (success) {
+            System.out.println("Challan paid successfully!");
+        } else {
+            System.out.println("Failed to pay challan! Please try again.");
+        }
+    }
+
 
     private static void payChallan(Scanner scanner) {
         System.out.print("Enter vehicle number: ");

@@ -11,6 +11,8 @@ public class Challan {
     private String status;
     private int userId;
 
+    private String type;
+
     public Challan(String vehicleNumber, String challanType, double amount, Date deadline, String status, int userId) {
         this.vehicleNumber = vehicleNumber;
         this.challanType = challanType;
@@ -18,6 +20,7 @@ public class Challan {
         this.deadline = deadline;
         this.status = status;
         this.userId = userId;
+        //this.type = type;
     }
 
     // Getters and setters
@@ -34,5 +37,8 @@ public class Challan {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
     public int getUserId() { return userId; }
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
     public void setUserId(int userId) { this.userId = userId; }
 }
