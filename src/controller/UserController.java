@@ -147,7 +147,7 @@ public class UserController {
 
     public List<Vehicle> getPendingVehicleRegistrations() {
         List<Vehicle> vehicles = new ArrayList<>();
-        String query = "SELECT * FROM vehicles WHERE status = 'Pending'";
+        String query = "SELECT * FROM vehicles";
         try (Connection connection = Database.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
 
