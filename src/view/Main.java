@@ -38,6 +38,7 @@ public class Main {
             }
 
             if (loggedInUserToken != null) {
+//                System.out.println("checking"+loggedInUser.getType());
                 if (loggedInUser.getType() == 'A') {
                     showAdminMenu(scanner);
                 } else {
@@ -111,33 +112,48 @@ public class Main {
 
     private static void viewVehicleRegistrations(Scanner scanner) {
         List<Vehicle> vehicles = userController.getPendingVehicleRegistrations();
-        for (Vehicle vehicle : vehicles) {
-            System.out.println(vehicle);
-        }
 
-        System.out.print("Enter vehicle ID to approve/deny: ");
-        int vehicleId = scanner.nextInt();
-        System.out.print("Enter 1 to approve, 2 to deny: ");
-        int action = scanner.nextInt();
-
-        if (action == 1) {
-            boolean success = userController.approveVehicleRegistration(vehicleId);
-            if (success) {
-                System.out.println("Vehicle registration approved.");
-            } else {
-                System.out.println("Failed to approve vehicle registration.");
-            }
-        } else if (action == 2) {
-            boolean success = userController.denyVehicleRegistration(vehicleId);
-            if (success) {
-                System.out.println("Vehicle registration denied.");
-            } else {
-                System.out.println("Failed to deny vehicle registration.");
-            }
+        // Check if there are any vehicles to display
+        if (vehicles.isEmpty()) {
+            System.out.println("No pending vehicle registrations.");
         } else {
-            System.out.println("Invalid action.");
+            // Print the table header
+            System.out.printf("%-10s %-20s %-20s %-20s %-10s %-10s%n", "ID", "Model", "License Number", "Owner Name", "Type", "Status");
+            System.out.println("---------------------------------------------------------------------");
+
+            // Print each vehicle in a row
+            for (Vehicle vehicle : vehicles) {
+                System.out.printf("%-10d %-20s %-20s %-20s %-10s %-10s%n",
+                        vehicle.getId(), vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType(), vehicle.getStatus());
+            }
+
+            // Prompt user to approve or deny
+            System.out.print("\nEnter vehicle ID to approve/deny: ");
+            int vehicleId = scanner.nextInt();
+            System.out.print("Enter 1 to approve, 2 to deny: ");
+            int action = scanner.nextInt();
+
+            boolean success;
+            if (action == 1) {
+                success = userController.approveVehicleRegistration(vehicleId);
+                if (success) {
+                    System.out.println("Vehicle registration approved.");
+                } else {
+                    System.out.println("Failed to approve vehicle registration.");
+                }
+            } else if (action == 2) {
+                success = userController.denyVehicleRegistration(vehicleId);
+                if (success) {
+                    System.out.println("Vehicle registration denied.");
+                } else {
+                    System.out.println("Failed to deny vehicle registration.");
+                }
+            } else {
+                System.out.println("Invalid action. Please enter 1 to approve or 2 to deny.");
+            }
         }
     }
+
 
     private static void generateChallan(Scanner scanner) {
         System.out.print("Enter vehicle number: ");
