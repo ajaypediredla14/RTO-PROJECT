@@ -1,6 +1,6 @@
 package model;
 
-public class License {
+public class License implements ILicense {
     private int id;
     private String name;
     private int age;
@@ -12,7 +12,7 @@ public class License {
     private String status;
     private String license_number;
 
-    public License(String name, int age, String aadhar, String address, char gender, String transactionId, int userId,String status,String license_number) {
+    public License(String name, int age, String aadhar, String address, char gender, String transactionId, int userId, String status, String license_number) {
         this.name = name;
         this.age = age;
         this.aadhar = aadhar;
@@ -20,35 +20,48 @@ public class License {
         this.gender = gender;
         this.transactionId = transactionId;
         this.userId = userId;
-        this.status=status;
-        this.license_number=license_number;
-    }
-
-    // Getters and setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public int getAge() { return age; }
-    public void setAge(int age) { this.age = age; }
-    public String getAadhar() { return aadhar; }
-    public void setAadhar(String aadhar) { this.aadhar = aadhar; }
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-    public char getGender() { return gender; }
-    public void setGender(char gender) { this.gender = gender; }
-    public String getTransactionId() { return transactionId; }
-    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
+        this.license_number = license_number;
     }
-    public String getLicense_number() {
-        return license_number;
-    }
+
+    @Override
+    public int getId() { return id; }
+    @Override
+    public void setId(int id) { this.id = id; }
+    @Override
+    public String getName() { return name; }
+    @Override
+    public void setName(String name) { this.name = name; }
+    @Override
+    public int getAge() { return age; }
+    @Override
+    public void setAge(int age) { this.age = age; }
+    @Override
+    public String getAadhar() { return aadhar; }
+    @Override
+    public void setAadhar(String aadhar) { this.aadhar = aadhar; }
+    @Override
+    public String getAddress() { return address; }
+    @Override
+    public void setAddress(String address) { this.address = address; }
+    @Override
+    public char getGender() { return gender; }
+    @Override
+    public void setGender(char gender) { this.gender = gender; }
+    @Override
+    public String getTransactionId() { return transactionId; }
+    @Override
+    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
+    @Override
+    public int getUserId() { return userId; }
+    @Override
+    public void setUserId(int userId) { this.userId = userId; }
+    @Override
+    public String getStatus() { return status; }
+    @Override
+    public void setStatus(String status) { this.status = status; }
+    @Override
+    public String getLicenseNumber() { return license_number; }
+    @Override
+    public void setLicenseNumber(String license_number) { this.license_number = license_number; }
 }

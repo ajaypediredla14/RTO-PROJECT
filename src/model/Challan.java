@@ -2,7 +2,7 @@ package model;
 
 import java.sql.Date;
 
-public class Challan {
+public class Challan implements IChallan {
     private int id;
     private String vehicleNumber;
     private String challanType;
@@ -20,19 +20,45 @@ public class Challan {
         this.userId = userId;
     }
 
-    // Getters and setters
+    @Override
     public int getId() { return id; }
+
+    @Override
     public void setId(int id) { this.id = id; }
+
+    @Override
     public String getVehicleNumber() { return vehicleNumber; }
+
+    @Override
     public void setVehicleNumber(String vehicleNumber) { this.vehicleNumber = vehicleNumber; }
+
+    @Override
     public String getChallanType() { return challanType; }
+
+    @Override
     public void setChallanType(String challanType) { this.challanType = challanType; }
+
+    @Override
     public double getAmount() { return amount; }
+
+    @Override
     public void setAmount(double amount) { this.amount = amount; }
+
+    @Override
     public Date getDeadline() { return deadline; }
+
+    @Override
     public void setDeadline(Date deadline) { this.deadline = deadline; }
+
+    @Override
     public String getStatus() { return status; }
+
+    @Override
     public void setStatus(String status) { this.status = status; }
+
+    @Override
     public int getUserId() { return userId; }
+
+    @Override
     public void setUserId(int userId) { this.userId = userId; }
 }
