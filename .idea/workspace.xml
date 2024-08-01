@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="46c48427-02e6-4061-9ad5-19819e424448" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/UserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,7 +71,7 @@
       <option name="presentableId" value="Default" />
       <updated>1722409836116</updated>
       <workItem from="1722409837237" duration="20329000" />
-      <workItem from="1722452671464" duration="1403000" />
+      <workItem from="1722452671464" duration="2752000" />
     </task>
     <servers />
   </component>
@@ -82,7 +83,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
-          <line>142</line>
+          <line>179</line>
           <properties class="controller.UserController" method="getPendingVehicleRegistrations">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -91,7 +92,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
-          <line>170</line>
+          <line>207</line>
           <properties class="controller.UserController" method="approveVehicleRegistration">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -109,7 +110,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
-          <line>299</line>
+          <line>336</line>
           <properties class="controller.UserController" method="getAllLicenses">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -118,7 +119,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/controller/UserController.java</url>
-          <line>268</line>
+          <line>305</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>

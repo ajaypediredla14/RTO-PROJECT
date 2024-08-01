@@ -92,6 +92,11 @@ public class Main {
             System.out.println("Invalid mobile number. Please enter a 10-digit number.");
             return;
         }
+        if (userController.isEmailDuplicate(email)) {
+            System.out.println("Email is already registered. Please try another email.");
+            return;
+        }
+
         User user = new User(name, email, password, 'U', mobile);
         boolean success = userController.registerUser(user);
 

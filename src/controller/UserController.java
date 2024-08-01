@@ -82,6 +82,24 @@ public class UserController {
         return null;
 }
 
+    public boolean isEmailDuplicate(String email) {
+        String query = "SELECT COUNT(*) FROM users WHERE email = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0; // Return true if email is found
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean registerVehicle(Vehicle vehicle) {
         String query = "INSERT INTO vehicles (model, license_number, owner_name, type, user_id, status) VALUES (?, ?, ?, ?, ?, 'Pending')";
         try (Connection connection = Database.getConnection();
@@ -126,13 +144,32 @@ public class UserController {
     }
 
     public boolean payChallan(int challanId) {
-        String query = "UPDATE challans SET status = 'Paid' WHERE id = ?";
+        String checkStatusQuery = "SELECT status FROM challans WHERE id = ?";
+        String updateStatusQuery = "UPDATE challans SET status = 'Paid' WHERE id = ?";
         try (Connection connection = Database.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, challanId);
+             PreparedStatement checkStatusStmt = connection.prepareStatement(checkStatusQuery);
+             PreparedStatement updateStatusStmt = connection.prepareStatement(updateStatusQuery)) {
 
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+            // Check the current status of the challan
+            checkStatusStmt.setInt(1, challanId);
+            ResultSet rs = checkStatusStmt.executeQuery();
+
+            if (rs.next()) {
+                String currentStatus = rs.getString("status");
+
+                if ("Paid".equalsIgnoreCase(currentStatus)) {
+                    System.out.println("Challan is already paid.");
+                    return false; // Challan is already paid
+                } else {
+                    // Update the status to 'Paid'
+                    updateStatusStmt.setInt(1, challanId);
+                    int rowsAffected = updateStatusStmt.executeUpdate();
+                    return rowsAffected > 0; // Challan is successfully paid
+                }
+            } else {
+                System.out.println("Challan not found.");
+                return false; // Challan not found
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
