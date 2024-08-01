@@ -2,6 +2,7 @@ package view;
 
 import controller.UserController;
 import model.*;
+import validation.InputValidator;
 
 import java.sql.Date;
 import java.util.List;
@@ -53,7 +54,10 @@ public class Main {
         String email = scanner.next();
         System.out.print("Enter password: ");
         String password = scanner.next();
-
+        if (!InputValidator.isValidEmail(email)) {
+            System.out.println("Invalid email format. Please try again.");
+            return;
+        }
         loggedInUserToken = userController.loginUser(email, password);
         if (loggedInUserToken != null) {
             System.out.println("Login successful! Token: " + loggedInUserToken);
@@ -74,7 +78,20 @@ public class Main {
         String mobile = scanner.next();
 //        System.out.print("Enter type (A for Admin, U for User): ");
 //        char type = scanner.next().charAt(0);
+        if (!InputValidator.isValidEmail(email)) {
+            System.out.println("Invalid email format. Please try again.");
+            return;
+        }
 
+        if (!InputValidator.isValidPassword(password)) {
+            System.out.println("Password must be at least 6 characters long. Please try again.");
+            return;
+        }
+
+        if (!InputValidator.isValidMobile(mobile)) {
+            System.out.println("Invalid mobile number. Please enter a 10-digit number.");
+            return;
+        }
         User user = new User(name, email, password, 'U', mobile);
         boolean success = userController.registerUser(user);
 
@@ -316,7 +333,10 @@ public class Main {
         char gender = scanner.next().charAt(0);
         System.out.print("Enter transaction ID: ");
         String transactionId = scanner.next();
-
+        if (!InputValidator.isValidAadhar(aadhar)) {
+            System.out.println("Invalid Aadhar number. Please enter a 12-digit number.");
+            return;
+        }
         License license = new License(name, age, aadhar, address, gender, transactionId, loggedInUser.getId(),"pending",null);
 
         boolean success = userController.registerLicense(license);
