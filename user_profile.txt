@@ -1,0 +1,20 @@
+User Profile
+Name: user1
+Email: user1@gmail.com
+Mobile: 23456789
+
+Vehicles:
+ID         Vehicle Number       Model                License Number       Owner Name           Type       Status    
+-------------------------------------------------------------------------------------------------------------------------------
+1          VEH77381             tvs                  23456                user1                2-wheeler  Completed 
+
+Licenses:
+ID         License No           Name                 Age   Aadhar               Address                        Gender     Transaction ID       Status              
+--------------------------------------------------------------------------------------------------------------------------------------------------
+1          null                 user1                23    23456                efrxcvnjlhgsa                  M          3456789              pending             
+
+Challans:
+ID         Vehicle Number       Challan Type         Amount     Deadline   Status         
+-----------------------------------------------------------------------------------------
+1          VEH77381             helmet               1500.00    2024-08-08 Paid           
+6          VEH77381             helmet               1200.00    2024-09-09 Unpaid         

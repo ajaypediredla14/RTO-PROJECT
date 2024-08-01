@@ -8,6 +8,11 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+
 public class Main {
 
     private static UserController userController = new UserController();
@@ -243,8 +248,12 @@ public class Main {
 
 
     private static void generateChallan(Scanner scanner) {
-        System.out.print("Enter vehicle number: ");
+        System.out.print("Enter vehicle number: (enter 0 for previous menu)");
         String vehicleNumber = scanner.next();
+        if(vehicleNumber.equals("0"))
+        {
+            return;
+        }
         System.out.print("Enter challan type: ");
         String challanType = scanner.next();
         System.out.print("Enter amount: ");
@@ -252,6 +261,8 @@ public class Main {
         System.out.print("Enter deadline (yyyy-mm-dd): ");
         String deadlineStr = scanner.next();
         Date deadline = Date.valueOf(deadlineStr);
+
+
 
         // Fetch user ID based on vehicle number
         int userId = userController.getUserIdByVehicleNumber(vehicleNumber);
@@ -279,7 +290,8 @@ public class Main {
             System.out.println("2. Driving License Registration");
             System.out.println("3. Pay Challans");
             System.out.println("4. View Profile");
-            System.out.println("5. Logout");
+            System.out.println("5. Print Profile");
+            System.out.println("6. Logout");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
 
@@ -297,6 +309,9 @@ public class Main {
                     viewProfile(scanner);
                     break;
                 case 5:
+                    printToFile(scanner);
+                    break;
+                case 6:
                     loggedInUserToken = null;
                     return;
                 default:
@@ -357,6 +372,8 @@ public class Main {
         System.out.print("Enter vehicle number: ");
         String vehicleNumber = scanner.next();
 
+
+
         // Retrieve all challans for the given vehicle number
         List<Challan> challans = userController.getChallansByVehicleNumber(vehicleNumber);
 
@@ -404,6 +421,68 @@ public class Main {
         }
     }
 
+    private static void printToFile(Scanner scanner) {
+        String filePath = "user_profile.txt"; // Path to the output file
+
+        // Fetch data
+        StringBuilder content = new StringBuilder();
+
+        // Fetch user profile details
+        content.append("User Profile\n");
+        content.append("Name: ").append(loggedInUser.getName()).append("\n");
+        content.append("Email: ").append(loggedInUser.getEmail()).append("\n");
+        content.append("Mobile: ").append(loggedInUser.getMobile()).append("\n\n");
+
+        // Fetch vehicles
+        content.append("Vehicles:\n");
+        List<Vehicle> vehicles = userController.getVehicles(loggedInUser.getId());
+        if (vehicles.isEmpty()) {
+            content.append("No vehicles registered.\n");
+        } else {
+            content.append(String.format("%-10s %-20s %-20s %-20s %-20s %-10s %-10s%n", "ID","Vehicle Number", "Model", "License Number", "Owner Name", "Type" ,"Status"));
+            content.append("-------------------------------------------------------------------------------------------------------------------------------\n");
+            for (Vehicle vehicle : vehicles) {
+                content.append(String.format("%-10d %-20s %-20s %-20s %-20s %-10s %-10s%n",
+                        vehicle.getId(), vehicle.getVehicle_number(), vehicle.getModel(), vehicle.getLicenseNumber(), vehicle.getOwnerName(), vehicle.getType(), vehicle.getStatus()));
+            }
+        }
+
+        // Fetch licenses
+        content.append("\nLicenses:\n");
+        List<License> licenses = userController.getLicenses(loggedInUser.getId());
+        if (licenses.isEmpty()) {
+            content.append("No licenses registered.\n");
+        } else {
+            content.append(String.format("%-10s %-20s %-20s %-5s %-20s %-30s %-10s %-20s %-20s%n", "ID","License No", "Name", "Age", "Aadhar", "Address", "Gender", "Transaction ID", "Status"));
+            content.append("--------------------------------------------------------------------------------------------------------------------------------------------------\n");
+            for (License license : licenses) {
+                content.append(String.format("%-10d %-20s %-20s %-5d %-20s %-30s %-10c %-20s %-20s%n",
+                        license.getId(), license.getLicense_number(), license.getName(), license.getAge(), license.getAadhar(), license.getAddress(), license.getGender(), license.getTransactionId(), license.getStatus()));
+            }
+        }
+
+        // Fetch challans
+        content.append("\nChallans:\n");
+        List<Challan> challans = userController.getChallans(loggedInUser.getId());
+        if (challans.isEmpty()) {
+            content.append("No challans found.\n");
+        } else {
+            content.append(String.format("%-10s %-20s %-20s %-10s %-10s %-15s%n", "ID", "Vehicle Number", "Challan Type", "Amount", "Deadline", "Status"));
+            content.append("-----------------------------------------------------------------------------------------\n");
+            for (Challan challan : challans) {
+                content.append(String.format("%-10d %-20s %-20s %-10.2f %-10s %-15s%n",
+                        challan.getId(), challan.getVehicleNumber(), challan.getChallanType(), challan.getAmount(), challan.getDeadline(), challan.getStatus()));
+            }
+        }
+
+        // Write content to file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(content.toString());
+            System.out.println("Profile details have been written to " + filePath);
+        } catch (IOException e) {
+            System.err.println("An error occurred while writing to the file: " + e.getMessage());
+        }
+    }
 
     private static void viewProfile(Scanner scanner) {
         System.out.println("User Profile");
